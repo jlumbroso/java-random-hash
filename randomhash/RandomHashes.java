@@ -11,7 +11,8 @@ import java.util.zip.CRC32;
 
 public class RandomHashes {
 
-    protected final static int HASH_MAX_COUNT = 100000;
+    public final static long MAX_VALUE = Integer.toUnsignedLong((int)Long.MAX_VALUE);
+    public final static long MIN_VALUE = 0;
 
     protected long seed;
     protected Random prng;
