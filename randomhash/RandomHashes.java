@@ -69,8 +69,8 @@ public class RandomHashes {
         count = Math.min(hashes.length, this.count);
         
         for (int i=0; i < count; i++) {
-            hashes[i] = RandomHash.truncateLong(
-                RandomHash.affineTransform(baseHash, numsCoprime[i], numsNoise[i]));
+            hashes[i] = RandomHashes.truncateLong(
+                RandomHashes.affineTransform(baseHash, numsCoprime[i], numsNoise[i]));
         }
     }
 
