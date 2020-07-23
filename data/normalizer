@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# text normalizer
+
+# by default read from standard input
+FILE=${1:-/dev/stdin}
+
+# by default skip first 55 lines
+SKIP=${2:-56}
+
+cat $FILE | tail -n +$SKIP | tr [:upper:] [:lower:] | tr -dc [:alpha:]"\n\' " | tr -d "'" | tr ' ' '\n' | grep '.' | iconv -f utf-8 -t ascii//TRANSLIT | tr -dc [:alpha:]"\n\' " | tr -d "'"
