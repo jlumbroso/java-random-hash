@@ -17,7 +17,7 @@ javac Example.java
 java Example
 ```
 
-This will generate a report, such as this one, which show how ten hash functions perform
+This will generate a report, such as this one, which show how a hundred hash functions perform
 at provided data that appears pseudo-random:
 
 ```
