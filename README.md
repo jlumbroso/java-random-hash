@@ -43,7 +43,7 @@ System.out.print(rhf("hello"));
 ```
 which will print:
 ```
-hellow -> 2852342977
+hello -> 2852342977
 ```
 it can also generate several pseudo-random hash at the same time, in this case 10:
 ```java
@@ -66,11 +66,11 @@ at the time:
 > standard hashing techniques do achieve practically uniformity of hashed values.
 
 The idea is that hash functions can "transform" data into pseudo-random variables.
-Then a text can be treated as a sequence of random variables draw from a uniform
+Then a text can be treated as a sequence of random variables drawn from a uniform
 distribution, where a given word will always occur as the same random value (i.e.,
 `a b c a a b c` could be hashed as `.00889 .31423 .70893 .00889 .00889 .31423 .70893` with
 every occurrence of `a` hashing to the same value). While this sounds strange,
-empirical evidence suggests it is not true enough in practice, and eventually [some
+empirical evidence suggests it is true enough in practice, and eventually [some
 theoretical basis](https://people.seas.harvard.edu/~salil/research/streamhash-Jun10.pdf)
 has come to support the practice.
 
@@ -86,4 +86,5 @@ But as highlighted in the above passage, it is important to be *careful*.
 
 In practice, it is easy to use poor quality hash functions, or to use cryptographic
 functions which will significantly slow down the speed (and relevance) of the
-probabilistic estimates. However, on most data, some 
+probabilistic estimates. However, on most data, some the cyclic polynomial checksums
+(such as Adler32 or CRC32) provide good results.
