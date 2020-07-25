@@ -1,5 +1,6 @@
 
-import randomhash.RandomHashes;
+import randomhash.RandomHashFamily;
+import randomhash.UniformAudit;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,15 +8,26 @@ import java.io.IOException;
 
 public class Example {
 
-    public final static int count = 100;
-    public final static String INPUT_FILE = "data/normalized.txt";
+    public final static String DEFAULT_INPUT_FILE = "data/normalized.txt";
+
+    public static int count = 100;
+    public static int bucketCount = 10;
+    public static String input_file = DEFAULT_INPUT_FILE;
 	public static void main(String[] args) {
-        RandomHashes rh = new RandomHashes(count);
-        UniformAudit ua = new UniformAudit(10, rh.MIN_VALUE, rh.MAX_VALUE);
+
+        if (args.length >= 1)
+            count = Integer.parseInt(args[0]);
+        if (args.length >= 2)
+            bucketCount = Integer.parseInt(args[1]);
+        if (args.length >= 3)
+            input_file = args[2];
+        
+        RandomHashFamily rh = new RandomHashFamily(count);
+        UniformAudit ua = new UniformAudit(bucketCount, RandomHashFamily.MIN_VALUE, RandomHashFamily.MAX_VALUE);
 
 		BufferedReader reader;
 		try {
-			reader = new BufferedReader(new FileReader(INPUT_FILE));
+			reader = new BufferedReader(new FileReader(input_file));
             
             String line = null;  
             while ((line = reader.readLine()) != null) { 
@@ -30,56 +42,9 @@ public class Example {
 		} catch (IOException e) {
 			e.printStackTrace();
         }
-        double[] b = ua.audit();
-        for (int i=0; i < b.length; i++)
-            System.out.printf("%5.2f%%\n", b[i]);
-    }
-    
-    public static class UniformAudit {
 
-        protected int bucketCount;
-        protected long minValue;
-        protected long maxValue;
-
-        protected long bucketSize;
-        
-        protected long[] buckets;
-        protected long total;
-
-        public UniformAudit(int bucketCount, long min, long max) {
-            this.bucketCount = bucketCount;
-            this.minValue = min;
-            this.maxValue = max;
-
-            this.bucketSize = (this.maxValue - this.minValue) / ((long)this.bucketCount);
-
-            this.reset();
-        }
-
-        public void reset() {
-            this.buckets = new long[this.bucketCount];
-            this.total = 0;
-        }
-
-        public void update(int value) { this.update(Integer.toUnsignedLong(value)); }
-
-        public void update(long value) {
-            if (value < this.minValue)
-                throw new IllegalArgumentException("value is smaller than min expected value");
-            
-            if (value > this.maxValue)
-                throw new IllegalArgumentException("value is larger than max expected value");
-
-            int bucketIndex = (int) ((value - this.minValue)/this.bucketSize);
-            this.buckets[bucketIndex]++;
-            this.total++;
-        }
-        
-        public double[] audit() {
-            double[] nums = new double[this.bucketCount];
-            for (int i=0; i < nums.length; i++)
-                nums[i] = ((double)this.buckets[i])/((double)this.total)*100;
-            return nums;
-        }
+        System.out.println("input: " + input_file);
+        System.out.println("number of hash functions: " + count);
+        ua.printReport();
     }
 }
