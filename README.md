@@ -1,6 +1,7 @@
 # java-random-hash
 
-A simple, time-tested, family of random hash functions in Java, based on CRC32.
+A simple, time-tested, family of random hash functions in Java, based on CRC32,
+affine transformations, and the Mersenne Twister.
 
 ## Features
 
