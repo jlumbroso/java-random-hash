@@ -7,19 +7,23 @@ affine transformations, and the Mersenne Twister.
 
 This introduces a family of hash functions that can be used to implement probabilistic
 algorithms such as HyperLogLog. It is based on *affine transformations of the CRC32 hash
-functions*, which has been shown to provide good performance. The pseudo-random numbers
-are drawn according to
+functions*, which have been empirically shown to provide good performance. The pseudo-random
+numbers are drawn according to
 [David Beaumont's Java implementation](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/VERSIONS/JAVA/MTRandom.java)
-(included here for convenience but with full credit) of the [Mersenne Twister](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html).
+(included here for convenience but with full credit) of the
+[Mersenne Twister](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html).
 
-To try out the hash functions, you can do:
+To try out the hash functions, you can compile and run the example program:
 ```shell
 javac Example.java
 java Example
 ```
 
-This will generate a report, such as this one, which show how a hundred hash functions perform
-at provided data that appears pseudo-random:
+This will generate a report, such as the one below, which shows how a hundred
+hash functions perform on provided data that appears pseudo-random (note that it
+is important when running these audits that the data provide as input be made
+of *unique* elements, even if the hash functions will mainly be used in streaming
+algorithms, to project duplicates to the same hashed value):
 
 ```
 java Example       
@@ -33,20 +37,22 @@ hashing report:
 > is uniform (with 90% confidence)? true
 ```
 
-In practice, you can use it this way:
+In practice, you can use it this way, by instantiating a family and using the
+`hash(String)` method to generate a single hashed value:
 ```java
 import randomhash.RandomHashFamily;
 
 RandomHashFamily rhf = new RandomHashFamily(1);
 
 System.out.print("hello -> ");
-System.out.print(rhf("hello"));
+System.out.print(rhf.hash("hello"));
 ```
 which will print:
 ```
 hello -> 2852342977
 ```
-it can also generate several pseudo-random hash at the same time, in this case 10:
+and it can also generate several pseudo-random hash values at the same time,
+in this case 10, which it will return in an array:
 ```java
 RandomHashFamily rhf = new RandomHashFamily(10);
 long[] hashes = rhf.hashes(); // 10 elements
