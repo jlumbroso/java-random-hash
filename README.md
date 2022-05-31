@@ -3,6 +3,8 @@
 A simple, time-tested, family of random hash functions in Java, based on CRC32,
 affine transformations, and the Mersenne Twister.
 
+This is a companion library to [the identical Python version](https://github.com/jlumbroso/python-random-hash).
+
 ## Features
 
 This introduces a family of hash functions that can be used to implement probabilistic
