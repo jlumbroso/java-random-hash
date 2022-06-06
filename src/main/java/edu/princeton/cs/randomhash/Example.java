@@ -1,6 +1,4 @@
-
-import edu.princeton.cs.randomhash.RandomHashFamily;
-import edu.princeton.cs.randomhash.UniformAudit;
+package edu.princeton.cs.randomhash;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -43,8 +41,10 @@ public class Example {
             while ((line = reader.readLine()) != null) {
 
                 if (checkDuplicates) {
-                    if (elementsSeen.contains(line))
+                    if (elementsSeen.contains(line)) {
+                        reader.close();
                         throw new Exception("duplicate element found: " + line);
+                    }
                     elementsSeen.add(line);
                 }
 
