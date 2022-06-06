@@ -1,9 +1,19 @@
-# java-random-hash
+# Java `randomhash` package
 
 A simple, time-tested, family of random hash functions in Java, based on CRC32,
 affine transformations, and the Mersenne Twister.
 
 This is a companion library to [the identical Python version](https://github.com/jlumbroso/python-random-hash).
+
+A [JAR file](https://github.com/jlumbroso/java-random-hash/releases/tag/v0.8.0) for this library can be downloaded from this repo, or it can be installed with [Apache Maven](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html) by adding the following to the `dependencies` section of your `pom.xml`:
+
+```xml
+<dependency>
+  <groupId>edu.princeton.cs.randomhash</groupId>
+  <artifactId>randomhash</artifactId>
+  <version>0.8.0</version>
+</dependency>
+```
 
 ## Features
 
@@ -18,8 +28,8 @@ numbers are drawn according to
 To try out the hash functions, you can compile and run the example program:
 
 ```shell
-javac Example.java
-java Example
+javac -cp 'randomhash-0.8.0.jar:.' Example.java
+java -cp 'randomhash-0.8.0.jar:.' Example
 ```
 
 This will generate a report, such as the one below, which shows how a hundred
