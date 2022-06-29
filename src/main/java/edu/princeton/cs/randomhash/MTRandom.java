@@ -30,6 +30,10 @@ package edu.princeton.cs.randomhash;
 import java.util.Random;
 
 /**
+ * A Java implementation of the MT19937 (Mersenne Twister) pseudo random
+ * number generator algorithm based upon the original C code by Makoto
+ * Matsumoto and Takuji Nishimura.
+ * 
  * @version 1.0
  * @author David Beaumont, Copyright 2005
  *         <p>
@@ -55,7 +59,7 @@ import java.util.Random;
  *         <p>
  *         <!-- Creative Commons License -->
  *         <a href="http://creativecommons.org/licenses/LGPL/2.1/"><img alt=
- *         "CC-GNU LGPL" border="0" src=
+ *         "CC-GNU LGPL" src=
  *         "http://creativecommons.org/images/public/cc-LGPL-a.png" /></a><br />
  *         This software is licensed under the
  *         <a href="http://creativecommons.org/licenses/LGPL/2.1/">CC-GNU
@@ -320,7 +324,7 @@ public class MTRandom extends Random {
 	 * 
 	 * <pre>
 	 * mt.setSeed(12345);
-	 * int foo = mt.nextInt(16) + (mt.nextInt(16) << 16);
+	 * int foo = mt.nextInt(16) + (mt.nextInt(16) &lt;&lt; 16);
 	 * </pre>
 	 * 
 	 * will not give the same result as

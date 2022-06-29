@@ -1,4 +1,3 @@
-
 import edu.princeton.cs.randomhash.RandomHashFamily;
 import edu.princeton.cs.randomhash.UniformAudit;
 
@@ -7,13 +6,44 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 
+/**
+ * The {@link edu.princeton.cs.randomhash.Example} class provides an example
+ * client for both the {@link edu.princeton.cs.randomhash.RandomHashFamily}
+ * class and the {@link edu.princeton.cs.randomhash.UniformAudit} class,
+ * which also happens to be a convenient command-line interface to the class.
+ * <br/>
+ * 
+ * It allows for the hashing of arbitrary files, using the pseudo-random hash
+ * family.
+ *
+ * @author Jérémie Lumbroso
+ * @version 1.1.1
+ */
 public class Example {
 
+    /**
+     * Default input file to be used, if no other file is specified.
+     */
     public final static String DEFAULT_INPUT_FILE = "data/unique.txt";
 
+    /**
+     * Number of hash functions to be used in the family.
+     */
     public static int count = 100;
+
+    /**
+     * Number of buckets to be used when running a {@link UniformAudit}.
+     */
     public static int bucketCount = 10;
+
+    /**
+     * Input file to read from.
+     */
     public static String input_file = DEFAULT_INPUT_FILE;
+
+    /**
+     * Boolean determining whether to filter out duplicates.
+     */
     public static boolean checkDuplicates = true;
 
     public static void main(String[] args) throws Exception {
@@ -43,8 +73,10 @@ public class Example {
             while ((line = reader.readLine()) != null) {
 
                 if (checkDuplicates) {
-                    if (elementsSeen.contains(line))
+                    if (elementsSeen.contains(line)) {
+                        reader.close();
                         throw new Exception("duplicate element found: " + line);
+                    }
                     elementsSeen.add(line);
                 }
 

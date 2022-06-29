@@ -1,14 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.princeton.cs</groupId>
   <artifactId>randomhash</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.1.1</version>
   <name>randomhash</name>
   <url>https://github.com/jlumbroso/java-random-hash</url>
   <description>
-    A simple, time-tested, family of random hash functions in Java, based on CRC32, affine transformations, and the Mersenne Twister.
+    A simple, time-tested, family of random hash functions in Java, based on CRC32, affine transformations, and the Mersenne Twister,
+    suitable for use in production probabilistic data streaming algorithms like HyperLogLog.
   </description>
   <dependencies>
     <dependency>
@@ -25,22 +25,50 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
+  <issueManagement>
+    <url>https://github.com/jlumbroso/java-random-hash/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
   <distributionManagement>
-   <repository>
-     <id>github</id>
-     <name>GitHub jlumbroso Apache Maven Packages</name>
-     <url>https://maven.pkg.github.com/jlumbroso/java-random-hash</url>
-   </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <!--repository>
+      <id>github</id>
+      <name>GitHub jlumbroso Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/jlumbroso/java-random-hash</url>
+    </repository-->
   </distributionManagement>
   <licenses>
     <license>
-        <name>Lesser General Public License (LGPL), v3.0</name>
-        <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <name>Lesser General Public License (LGPL), v3.0</name>
+      <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
     </license>
   </licenses>
+  <developers>
+    <developer>
+      <name>Jérémie Lumbroso</name>
+      <email>lumbroso@cs.princeton.edu</email>
+      <url>https://github.com/jlumbroso</url>
+      <id>jlumbroso</id>
+      <organization>Princeton University, Department of Computer Science</organization>
+      <organizationUrl>https://www.cs.princeton.edu</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/jlumbroso/java-random-hash.git</connection>
+    <developerConnection>scm:git:ssh://github.com:jlumbroso/java-random-hash.git</developerConnection>
+    <url>http://github.com/jlumbroso/java-random-hash/tree/master</url>
+  </scm>
   <build>
     <plugins>
       <plugin>
+
         <!-- Build an executable JAR -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -53,6 +81,62 @@
               <mainClass>edu.princeton.cs.randomhash.Example</mainClass>
             </manifest>
           </archive>
+        </configuration>
+      </plugin>
+
+      <!-- Build a source JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Build a javadoc JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Sign using GPG in the path (needs to be installed, and key configured) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Publish on Maven Central -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.13</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
     </plugins>

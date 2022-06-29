@@ -1,16 +1,59 @@
 package edu.princeton.cs.randomhash;
 
+/**
+ * Companion class to {@link RandomHashFamily}, meant both to be an example
+ * client, and to provide a benchmark for the empirical randomness/uniformity of
+ * the values produced by these pseudo-random hash functions.
+ * 
+ * @author Jérémie Lumbroso
+ * @version 1.1.1
+ */
 public class UniformAudit {
 
+    /**
+     * The number of buckets in which to group the values produced by the
+     * pseudo-random hash functions.
+     */
     protected int bucketCount;
+
+    /**
+     * The smallest value that we expect to see among the values fed to this class.
+     */
     protected long minValue;
+
+    /**
+     * The largest value that we expect to see among the values fed to this class.
+     */
     protected long maxValue;
 
+    /**
+     * The computed bucket size, based on the values provided as
+     * {@link bucketCount}, {@link minValue} and {@link maxValue}.
+     */
     protected long bucketSize;
 
+    /**
+     * The internal array containing the buckets in which we count the number
+     * of hash values that have been processed, which fall in the corresponding
+     * interval.
+     */
     protected long[] buckets;
+
+    /**
+     * The total number of hash values that have been processed.
+     */
     protected long total;
 
+    /**
+     * Creates a new {@link UniformAudit} instance.
+     * 
+     * @param bucketCount The number of buckets in which to group the hash values
+     *                    that are processed
+     * @param min         The smallest value that we expect to see among the values
+     *                    fed to this class
+     * @param max         The largest value that we expect to see among the values
+     *                    fed to this class
+     */
     public UniformAudit(int bucketCount, long min, long max) {
         this.bucketCount = bucketCount;
         this.minValue = min;
@@ -21,15 +64,35 @@ public class UniformAudit {
         this.reset();
     }
 
+    /**
+     * Resets all internal counters to zero (both the buckets and the running
+     * total).
+     */
     public void reset() {
         this.buckets = new long[this.bucketCount];
         this.total = 0;
     }
 
+    /**
+     * Process a single hash value.
+     * 
+     * @param value The hash value to process
+     * @throws IllegalArgumentException If the given value is not in the range by
+     *                                  the internal minimum and maximum values
+     *                                  specified at construction time.
+     */
     public void update(int value) {
         this.update(Integer.toUnsignedLong(value));
     }
 
+    /**
+     * Process a single hash value.
+     * 
+     * @param value The hash value to process
+     * @throws IllegalArgumentException If the given value is not in the range by
+     *                                  the internal minimum and maximum values
+     *                                  specified at construction time.
+     */
     public void update(long value) {
         if (value < this.minValue)
             throw new IllegalArgumentException("value is smaller than min expected value");
@@ -42,10 +105,22 @@ public class UniformAudit {
         this.total++;
     }
 
+    /**
+     * Returns the total number of hash values that have been processed so far.
+     * 
+     * @return long The total number of hash values that have been processed.
+     */
     public long total() {
         return this.total;
     }
 
+    /**
+     * Returns the probability distribution of the hash values that have been
+     * processed, as an array of values that sum to {@code 1.0}.
+     * 
+     * @return double[] An array with the discrete probability distribution of the
+     *         hash values
+     */
     public double[] bucketDistribution() {
         double[] nums = new double[this.bucketCount];
         for (int i = 0; i < nums.length; i++)
@@ -53,6 +128,20 @@ public class UniformAudit {
         return nums;
     }
 
+    /**
+     * Computes and returns the Chi Square statistic for the hash values that have
+     * been processed. <br/>
+     * 
+     * This is a measure of the distance of the (empirical) distribution of the hash
+     * values that have been processed, to the idealized discrete uniform
+     * distribution. If the empirical distribution is close to the discrete uniform
+     * distribution, then this Chi Square statistic will be below the critical
+     * threshold defined in the tables {@see upperTailCV90} (for 90% confidence) and
+     * {@see upperTailCV99} (for 99% confidence).
+     * 
+     * @return double The Chi Square statistic for the empirical distribution of
+     *         hash values that have been processed
+     */
     public double chiSquaredTest() {
         double chiSquaredTest = 0.0;
         double nums[] = this.bucketDistribution();
@@ -70,11 +159,29 @@ public class UniformAudit {
         return chiSquaredTest;
     }
 
+    /**
+     * Returns {@code true} if there is at least a 90% probability that the hash
+     * values are uniformly distributed, using a Chi Square statistical test.
+     * 
+     * @return boolean {@code true} if there is at least a 90% probability that the
+     *         hash values are uniformly distributed
+     */
     public boolean isLikelyUniform() {
         double chiSquaredTest = this.chiSquaredTest();
         return acceptNullHypothesis(this.bucketCount - 1, chiSquaredTest);
     }
 
+    /**
+     * Returns {@code true} if there is the Chi Square statistic, with the given
+     * degrees of freedom, is below the critical threshold defined in the tables
+     * {@see upperTailCV90} (for 90% confidence).
+     * 
+     * @param df             The number of degrees of freedom in the Chi Square
+     *                       statistical test
+     * @param chiSquaredTest The Chi Square statistic for the empirical distribution
+     * @return boolean {@code true} if there is at least a 90% probability that the
+     *         hash values are uniformly distributed
+     */
     protected static boolean acceptNullHypothesis(int df, double chiSquaredTest) {
         if (df <= 0)
             throw new IllegalArgumentException("df must be strictly positive");
@@ -86,6 +193,11 @@ public class UniformAudit {
         return chiSquaredTest < cv;
     }
 
+    /**
+     * Prints a summary of the empirical distribution of the hash values processed
+     * so far, and computes the Chi Squared statistic, to determine how likely it is
+     * for the hash values to seem uniformly distributed.
+     */
     public void printReport() {
         double[] distribution = this.bucketDistribution();
         double chiSquaredTest = this.chiSquaredTest();
@@ -108,8 +220,11 @@ public class UniformAudit {
     // From: https://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm
     // See also: https://www.itl.nist.gov/div898/handbook/eda/section3/eda35f.htm
 
-    // Upper-tail critical values of chi-square
-    // distribution with ν degrees of freedom and 90% confidence
+    /**
+     * Upper-tail critical values of chi-square distribution with ν degrees of
+     * freedom and 90% confidence
+     * (see: https://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm)
+     */
     protected final static double[] upperTailCV90 = {
             2.706, // df = 1
             4.605, // df = 2
@@ -213,8 +328,11 @@ public class UniformAudit {
             118.498, // df =100
     };
 
-    // Upper-tail critical values of chi-square
-    // distribution with ν degrees of freedom and 99% confidence
+    /**
+     * Upper-tail critical values of chi-square distribution with ν degrees of
+     * freedom and 99% confidence
+     * (see: https://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm)
+     */
     protected final static double[] upperTailCV99 = {
             6.635, // df = 1
             9.210, // df = 2
